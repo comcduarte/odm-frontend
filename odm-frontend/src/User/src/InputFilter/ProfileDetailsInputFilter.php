@@ -9,6 +9,7 @@ use Laminas\InputFilter\Input;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator\NotEmpty;
 use Laminas\Validator\StringLength;
+use Laminas\Validator\Digits;
 
 /**
  * @template TFilteredValues
@@ -49,5 +50,20 @@ class ProfileDetailsInputFilter extends InputFilter
                 'message' => '<b>Last Name</b> must have between 8 and 150 characters',
             ], true);
         $this->add($lastName);
+        
+        $phoneNumber = new Input('phoneNumber');
+        $phoneNumber->setRequired(false);
+        $phoneNumber->getFilterChain()
+            ->attachByName(StringTrim::class);
+        $phoneNumber->getValidatorChain()
+            ->attachByName(StringLength::class, [
+                'min'     => 10,
+                'max'     => 12,
+                'message' => '<b>Phone Number</b> must have between 10 and 12 characters',
+            ], true)
+            ->attachByName(Digits::class,[
+                'message' => '<b>Phone Number</b> must contain only digits',
+            ]);
+        $this->add($phoneNumber);
     }
 }

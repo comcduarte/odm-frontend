@@ -39,5 +39,16 @@ class UserDetailFieldset extends Fieldset
             ],
             'type'       => Text::class,
         ]);
+        
+        $this->add([
+            'name'       => 'phoneNumber',
+            'options'    => [
+                'label' => 'Phone Number',
+            ],
+            'attributes' => [
+                'placeholder' => 'Phone Number...',
+            ],
+            'type'       => Text::class,
+        ]);
     }
 }

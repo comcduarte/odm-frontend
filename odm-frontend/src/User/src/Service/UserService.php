@@ -89,7 +89,8 @@ class UserService implements UserServiceInterface
 
         $detail = (new UserDetail())
             ->setFirstName($data['detail']['firstName'] ?? null)
-            ->setLastName($data['detail']['lastName'] ?? null);
+            ->setLastName($data['detail']['lastName'] ?? null)
+            ->setPhoneNumber($data['detail']['phoneNumber'] ?? null);
 
         $user = (new User())
             ->setDetail($detail)
@@ -149,6 +150,10 @@ class UserService implements UserServiceInterface
 
         if (isset($data['detail']['lastName'])) {
             $user->getDetail()->setLastName($data['detail']['lastName']);
+        }
+        
+        if (isset($data['detail']['phoneNumber'])) {
+            $user->getDetail()->setLastName($data['detail']['phoneNumber']);
         }
 
         if (! empty($data['avatar'])) {

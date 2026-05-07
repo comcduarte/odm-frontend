@@ -25,6 +25,9 @@ class UserDetail extends AbstractEntity
 
     #[ORM\Column(name: 'lastName', type: 'string', length: 191, nullable: true)]
     protected string $lastName;
+    
+    #[ORM\Column(name: 'phoneNumber', type: 'string', length: 12, nullable: true)]
+    protected string $phoneNumber;
 
     public function getUser(): UserInterface
     {
@@ -61,15 +64,28 @@ class UserDetail extends AbstractEntity
 
         return $this;
     }
+    
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+    
+    public function setPhoneNumber(string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
+        
+        return $this;
+    }
 
     public function getArrayCopy(): array
     {
         return [
-            'uuid'      => $this->getUuid()->toString(),
-            'firstName' => $this->getFirstName(),
-            'lastName'  => $this->getLastName(),
-            'created'   => $this->getCreated(),
-            'updated'   => $this->getUpdated(),
+            'uuid'          => $this->getUuid()->toString(),
+            'firstName'     => $this->getFirstName(),
+            'lastName'      => $this->getLastName(),
+            'phoneNumber'   => $this->getPhoneNumber(),
+            'created'       => $this->getCreated(),
+            'updated'       => $this->getUpdated(),
         ];
     }
 }
