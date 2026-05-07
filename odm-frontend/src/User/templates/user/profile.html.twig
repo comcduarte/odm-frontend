@@ -1,0 +1,35 @@
+{% extends '@layout/default.html.twig' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+{% block content %}
+    <div class="my-profile">
+        <div class="container ">
+            <div class="profile-details-header">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>My Profile</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-actions">
+                <div class="row">
+                    <div class="col-md-4 actions">
+                        <div class="collapse-menu clearfix">
+                            <span>Profile menu</span>
+                            <i class="fas fa-bars"></i>
+                        </div>
+                        <ul class="profile-action-menu">
+                            {{ navigationPartial('user_profile_menu', 'partial::user_profile_menu') }}
+                        </ul>
+                    </div>
+                    <div class="col-md-8">
+                        {{ content|raw }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

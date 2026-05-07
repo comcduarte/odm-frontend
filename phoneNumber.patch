@@ -1,0 +1,194 @@
+diff --git a/config/autoload/mail.global.php b/config/autoload/mail.global.php
+index 9ef3b30..89054e5 100644
+--- a/config/autoload/mail.global.php
++++ b/config/autoload/mail.global.php
+@@ -14,13 +14,13 @@
+             //message configuration
+             'message_options' => [
+                 //from email address of the email
+-                'from' => '',
++                'from' => 'odm@middletownct.gov',
+                 //from name to be displayed instead of from address
+-                'from_name' => '',
++                'from_name' => 'Off Duty Management',
+                 //reply-to email address of the email
+-                'reply_to' => '',
++                'reply_to' => 'odm@middletownct.gov',
+                 //replyTo name to be displayed instead of the address
+-                'reply_to_name' => '',
++                'reply_to_name' => 'Off Duty Management',
+                 //destination email address as string or a list of email addresses
+                 'to' => [],
+                 //copy destination addresses
+@@ -58,9 +58,9 @@
+             //options that will be used only if esmtp adapter is used
+             'smtp_options' => [
+                 //hostname or IP address of the mail server
+-                'host' => '',
++                'host' => 'smtprelay.middletownct.gov',
+                 //port of the mail server - 587 or 465 for secure connections
+-                'port'              => 587,
++                'port'              => 25,
+                 'connection_config' => [
+                     //the smtp authentication identity
+                     'username' => '',
+@@ -68,7 +68,7 @@
+                     'password' => '',
+                     //to disable auto_tls set tls key to false
+                     //it's not recommended to disable TLS while connecting to an SMTP server
+-                    'tls' => null,
++                    'tls' => false,
+                 ],
+             ],
+         ],
+diff --git a/data/doctrine/migrations/Version20260507153215.php b/data/doctrine/migrations/Version20260507153215.php
+new file mode 100644
+index 0000000..2a4d3f5
+--- /dev/null
++++ b/data/doctrine/migrations/Version20260507153215.php
+@@ -0,0 +1,31 @@
++<?php
++
++declare(strict_types=1);
++
++namespace Frontend\Migrations;
++
++use Doctrine\DBAL\Schema\Schema;
++use Doctrine\Migrations\AbstractMigration;
++
++/**
++ * Auto-generated Migration: Please modify to your needs!
++ */
++final class Version20260507153215 extends AbstractMigration
++{
++    public function getDescription(): string
++    {
++        return '';
++    }
++
++    public function up(Schema $schema): void
++    {
++        // this up() migration is auto-generated, please modify it to your needs
++        $this->addSql('ALTER TABLE user_detail ADD phoneNumber VARCHAR(32) DEFAULT NULL AFTER lastName');
++    }
++
++    public function down(Schema $schema): void
++    {
++        // this down() migration is auto-generated, please modify it to your needs
++        $this->addSql('ALTER TABLE user_detail DROP phoneNumber');
++    }
++}
+diff --git a/src/User/src/Entity/UserDetail.php b/src/User/src/Entity/UserDetail.php
+index c747ec6..e6d53ec 100644
+--- a/src/User/src/Entity/UserDetail.php
++++ b/src/User/src/Entity/UserDetail.php
+@@ -25,6 +25,9 @@
+ 
+     #[ORM\Column(name: 'lastName', type: 'string', length: 191, nullable: true)]
+     protected string $lastName;
++    
++    #[ORM\Column(name: "phoneNumber", type: "string", length: 32, nullable: true)]
++    protected string $phoneNumber;
+ 
+     public function getUser(): UserInterface
+     {
+@@ -61,6 +64,18 @@
+ 
+         return $this;
+     }
++    
++    public function getPhoneNumber(): ?string
++    {
++        return $this->phoneNumber;
++    }
++    
++    public function setPhoneNumber(string $phoneNumber): self
++    {
++        $this->phoneNumber = $phoneNumber;
++        
++        return $this;
++    }
+ 
+     public function getArrayCopy(): array
+     {
+@@ -68,6 +83,7 @@
+             'uuid'      => $this->getUuid()->toString(),
+             'firstName' => $this->getFirstName(),
+             'lastName'  => $this->getLastName(),
++            'phoneNumber' => $this->getPhoneNumber(),
+             'created'   => $this->getCreated(),
+             'updated'   => $this->getUpdated(),
+         ];
+diff --git a/src/User/src/Fieldset/UserDetailFieldset.php b/src/User/src/Fieldset/UserDetailFieldset.php
+index 26ce65e..64bc6fd 100644
+--- a/src/User/src/Fieldset/UserDetailFieldset.php
++++ b/src/User/src/Fieldset/UserDetailFieldset.php
+@@ -39,5 +39,16 @@
+             ],
+             'type'       => Text::class,
+         ]);
++        
++        $this->add([
++            'name'       => 'phoneNumber',
++            'options'    => [
++                'label' => 'Phone Number',
++            ],
++            'attributes' => [
++                'placeholder' => 'Phone Number...',
++            ],
++            'type'       => Text::class,
++        ]);
+     }
+ }
+diff --git a/src/User/src/InputFilter/ProfileDetailsInputFilter.php b/src/User/src/InputFilter/ProfileDetailsInputFilter.php
+index 6b3e12c..474ad38 100644
+--- a/src/User/src/InputFilter/ProfileDetailsInputFilter.php
++++ b/src/User/src/InputFilter/ProfileDetailsInputFilter.php
+@@ -49,5 +49,20 @@
+                 'message' => '<b>Last Name</b> must have between 8 and 150 characters',
+             ], true);
+         $this->add($lastName);
++        
++        $phoneNumber = new Input('phoneNumber');
++        $phoneNumber->setRequired(true);
++        $phoneNumber->getFilterChain()
++            ->attachByName(StringTrim::class);
++        $phoneNumber->getValidatorChain()
++            ->attachByName(NotEmpty::class, [
++                'message' => '<b>Phone Number</b> is required and cannot be empty',
++            ], true)
++            ->attachByName(StringLength::class, [
++                'min'     => 2,
++                'max'     => 32,
++                'message' => '<b>Phone Number</b> must have between 8 and 32 characters',
++            ], true);
++        $this->add($phoneNumber);
+     }
+ }
+diff --git a/src/User/src/Service/UserService.php b/src/User/src/Service/UserService.php
+index 2ecb41f..2cd5a54 100644
+--- a/src/User/src/Service/UserService.php
++++ b/src/User/src/Service/UserService.php
+@@ -89,7 +89,8 @@
+ 
+         $detail = (new UserDetail())
+             ->setFirstName($data['detail']['firstName'] ?? null)
+-            ->setLastName($data['detail']['lastName'] ?? null);
++            ->setLastName($data['detail']['lastName'] ?? null)
++            ->setPhoneNumber($data['detail']['phoneNumber'] ?? null);
+ 
+         $user = (new User())
+             ->setDetail($detail)
+diff --git a/src/User/templates/user/register.html.twig b/src/User/templates/user/register.html.twig
+index da39bdd..d7546dd 100644
+--- a/src/User/templates/user/register.html.twig
++++ b/src/User/templates/user/register.html.twig
+@@ -21,6 +21,8 @@
+                     {{ formElement(details.get('firstName')) }}
+ 
+                     {{ formElement(details.get('lastName')) }}
++                    
++                    {{ formElement(details.get('phoneNumber')) }}
+ 
+                     {{ formElement(form.get('email')) }}
+ 
