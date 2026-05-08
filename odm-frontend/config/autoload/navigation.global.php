@@ -10,7 +10,7 @@ return [
             'left_menu'         => [
                 'type'    => 'ArrayProvider',
                 'options' => [
-                    'items' => [
+                    'items_disabled' => [
                         [
                             'options'    => [
                                 'label' => 'Pages',
