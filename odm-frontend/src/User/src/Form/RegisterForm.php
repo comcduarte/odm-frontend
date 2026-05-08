@@ -8,12 +8,12 @@ use Fig\Http\Message\RequestMethodInterface;
 use Frontend\User\Fieldset\UserDetailFieldset;
 use Frontend\User\InputFilter\ProfileDetailsInputFilter;
 use Frontend\User\InputFilter\RegisterInputFilter;
+use Laminas\Form\Form;
+use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Email;
 use Laminas\Form\Element\Password;
 use Laminas\Form\Element\Submit;
-use Laminas\Form\Form;
-use Laminas\Form\FormInterface;
 use Laminas\InputFilter\InputFilterInterface;
 use Laminas\Session\Container;
 
@@ -77,6 +77,22 @@ class RegisterForm extends Form
                 'placeholder' => 'Confirm password...',
             ],
             'type'       => Password::class,
+        ]);
+        
+        $this->add([
+            'name' => 'terms',
+            'attributes' => [
+                'class' => 'form-check-input',
+            ],
+            'label_attributes' => [
+                'class' => 'form-check-label'
+            ],
+            'options' => [
+                'label' => 'By checking this box you agree to receive Transactional SMS communication from the City of Middletown.  
+                    Message frequency may vary.  Message and data rates may apply. Reply HELP for help, or STOP to opt-out.',
+                
+            ],
+            'type' => Checkbox::class,
         ]);
 
         $this->add([
