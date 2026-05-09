@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildpath>
+	<buildpathentry kind="src" path="odm-frontend/bin"/>
+	<buildpathentry kind="src" path="odm-frontend/config"/>
+	<buildpathentry kind="src" path="odm-frontend/data/doctrine/fixtures"/>
+	<buildpathentry kind="src" path="odm-frontend/data/doctrine/migrations"/>
+	<buildpathentry kind="src" path="odm-frontend/public"/>
+	<buildpathentry kind="src" path="odm-frontend/src/App/src"/>
+	<buildpathentry kind="src" path="odm-frontend/src/Contact/src"/>
+	<buildpathentry kind="src" path="odm-frontend/src/Page/src"/>
+	<buildpathentry kind="src" path="odm-frontend/src/Plugin/src"/>
+	<buildpathentry kind="src" path="odm-frontend/src/User/src"/>
+	<buildpathentry kind="src" path="odm-frontend/test/Common"/>
+	<buildpathentry kind="src" path="odm-frontend/test/Unit/App"/>
+	<buildpathentry kind="src" path="odm-frontend/test/Unit/Contact"/>
+	<buildpathentry kind="src" path="odm-frontend/test/Unit/Page"/>
+	<buildpathentry kind="src" path="odm-frontend/test/Unit/Plugin"/>
+	<buildpathentry kind="src" path="odm-frontend/test/Unit/User"/>
+	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
+</buildpath>
